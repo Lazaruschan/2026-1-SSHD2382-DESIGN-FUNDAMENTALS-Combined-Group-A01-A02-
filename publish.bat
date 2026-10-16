@@ -131,12 +131,25 @@ git config --get user.email >nul 2>&1
 if errorlevel 1 git config user.email "Lazaruschan@users.noreply.github.com"
 exit /b 0
 
+:git_auth
+REM GitHub's git server accepts this token as Basic auth. A Bearer header is rejected.
+REM Empty credential.helper stops a saved Windows login from replacing that header.
+set "GIT_TERMINAL_PROMPT=0"
+set "GCM_INTERACTIVE=Never"
+powershell -NoProfile -Command "[IO.File]::WriteAllText((Join-Path $env:TEMP 'sshd2382-basic.txt'), [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes('x-access-token:' + $env:GITHUB_TOKEN)))"
+set /p "SSHD_BASIC="<"%TEMP%\sshd2382-basic.txt"
+del /q /f "%TEMP%\sshd2382-basic.txt" >nul 2>&1
+git -c credential.helper= -c "http.extraHeader=AUTHORIZATION: Basic !SSHD_BASIC!" %*
+set "GIT_RC=!ERRORLEVEL!"
+exit /b !GIT_RC!
+
 :sync_and_push
-set "AUTH=AUTHORIZATION: bearer %GITHUB_TOKEN%"
 echo ==^> Checking %REMOTE%
-git -c http.extraHeader="%AUTH%" ls-remote "%REPO_URL%" "refs/heads/%BRANCH%" > "%TEMP%\sshd2382-remote.txt"
+call :git_auth ls-remote "%REPO_URL%" "refs/heads/%BRANCH%" > "%TEMP%\sshd2382-remote.txt"
 if errorlevel 1 (
-  echo Error: could not reach GitHub. Check the token and that the repo exists.
+  echo Error: GitHub rejected the token, or the repo cannot be reached.
+  echo The token needs repo access for Lazaruschan/2026-1-SSHD2382-DESIGN-FUNDAMENTALS-Combined-Group-A01-A02-
+  echo A classic token needs the repo scope. A fine-grained token needs Contents: Read and write.
   del /q /f "%TEMP%\sshd2382-remote.txt" >nul 2>&1
   exit /b 1
 )
@@ -150,7 +163,7 @@ if not defined HAS_REMOTE (
 )
 
 echo ==^> Syncing with %REMOTE%/%BRANCH%
-git -c http.extraHeader="%AUTH%" fetch "%REMOTE%" "%BRANCH%"
+call :git_auth fetch "%REMOTE%" "%BRANCH%"
 if errorlevel 1 exit /b 1
 
 set "BEHIND=0"
@@ -163,7 +176,7 @@ if not "!BEHIND!"=="0" (
 
 :do_push
 echo ==^> Pushing to %REMOTE%/%BRANCH%
-git -c http.extraHeader="%AUTH%" push -u "%REMOTE%" "%BRANCH%"
+call :git_auth push -u "%REMOTE%" "%BRANCH%"
 if errorlevel 1 exit /b 1
 exit /b 0
 
