@@ -1,0 +1,17 @@
+{
+  "name": "sshd2382-design-fundamentals",
+  "version": "1.0.0",
+  "description": "SSHD2382 Design Fundamentals course website",
+  "main": "index.js",
+  "scripts": {
+    "export-slides": "python export-slides.py",
+    "export-worksheets": "python export-worksheets.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.5.1"
+  }
+}

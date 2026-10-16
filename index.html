@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title is set from COURSE_CONFIG -->
+    <title>Course Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    <script src="auth.js" defer></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!--
+      ============================================================
+      COURSE WEBSITE TEMPLATE
+      ============================================================
+      How to use for a new course:
+        1. Duplicate this file (e.g. index.html for each repo/site).
+        2. Edit ONLY the COURSE_CONFIG object in the <script> below.
+        3. Leave the HTML markup as-is — the page renders from config.
+
+      Optional: hide a tab by setting its `enabled: false` in config.tabs
+      ============================================================
+    -->
+
+    <!-- Header -->
+    <header class="bg-black text-white py-12 px-6 shadow-md">
+        <div class="max-w-5xl mx-auto">
+            <p id="header-eyebrow" class="text-gray-400 text-sm font-semibold tracking-wider uppercase mb-2"></p>
+            <h1 id="header-title" class="text-3xl md:text-5xl font-bold mb-4"></h1>
+            <p id="header-tagline" class="text-lg text-gray-400 max-w-2xl"></p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm overflow-x-auto">
+        <div id="nav-tabs" class="max-w-5xl mx-auto flex">
+            <!-- Populated by JS from COURSE_CONFIG.tabs -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto w-full p-6 py-8">
+
+        <!-- OVERVIEW TAB -->
+        <div id="home" class="tab-content active space-y-8">
+            <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-2xl font-bold text-black mb-4 border-b pb-2">Course Objectives</h2>
+                <p id="overview-description" class="text-gray-700 mb-4 leading-relaxed"></p>
+
+                <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-3">Intended Learning Outcomes:</h3>
+                <ul id="overview-outcomes" class="list-disc pl-6 space-y-2 text-gray-700">
+                    <!-- Populated by JS -->
+                </ul>
+            </section>
+
+            <section id="staff-container" class="grid md:grid-cols-2 gap-6">
+                <!-- Populated by JS -->
+            </section>
+        </div>
+
+        <!-- SCHEDULE TAB -->
+        <div id="schedule" class="tab-content">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6 border-b border-gray-200 bg-gray-50">
+                    <h2 class="text-2xl font-bold text-black">Tentative Teaching Schedule</h2>
+                    <p id="schedule-note" class="text-gray-600 mt-1"></p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr id="schedule-head" class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wider">
+                                <!-- Populated by JS -->
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-700 divide-y divide-gray-200" id="schedule-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASSESSMENTS TAB -->
+        <div id="assessments" class="tab-content space-y-6">
+            <h2 id="assessments-heading" class="text-2xl font-bold text-black mb-6"></h2>
+
+            <div class="grid gap-4" id="assessments-container">
+                <!-- Populated by JS -->
+            </div>
+
+            <div id="plagiarism-notice"
+                class="mt-8 bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg shadow-sm">
+                <h3 class="text-lg font-bold text-yellow-800 flex items-center gap-2 mb-2">
+                    <i class="fas fa-exclamation-triangle"></i> Plagiarism Warning
+                </h3>
+                <p id="plagiarism-text" class="text-yellow-900 text-sm leading-relaxed"></p>
+            </div>
+        </div>
+
+        <!-- SLIDES TAB -->
+        <div id="slides" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 id="slides-heading" class="text-2xl font-bold text-black mb-2">Lecture &amp; Tutorial Slides</h2>
+                <p id="slides-note" class="text-gray-600 mb-6"></p>
+                <div id="slides-extra" class="mb-6"></div>
+                <div id="slides-container" class="grid gap-3">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div id="slides-preview-panel" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-gray-200 bg-gray-50">
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Preview</p>
+                        <p id="slides-preview-title" class="font-semibold text-gray-800 truncate">Select a lecture to
+                            preview</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <a id="slides-preview-open" href="#" target="_blank" rel="noopener noreferrer"
+                            class="hidden text-sm font-medium text-black hover:underline px-3 py-2">
+                            <i class="fas fa-external-link-alt mr-1"></i> Open full screen
+                        </a>
+                        <button type="button" id="slides-preview-close"
+                            class="hidden text-sm text-gray-500 hover:text-black px-3 py-2">
+                            Close
+                        </button>
+                    </div>
+                </div>
+                <div id="slides-preview-empty"
+                    class="aspect-video bg-gray-100 flex items-center justify-center text-gray-500 text-sm p-6 text-center">
+                    Click <span class="font-semibold mx-1">Preview</span> on a week in the list above to view slides
+                    here.
+                </div>
+                <iframe id="slides-preview-frame" title="Slide preview"
+                    class="hidden w-full aspect-video bg-black border-0" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- WORKSHOP TAB -->
+        <div id="workshop" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 id="workshop-heading" class="text-2xl font-bold text-black mb-2">Workshop</h2>
+                <p id="workshop-note" class="text-gray-600 mb-6"></p>
+                <div id="workshop-container" class="grid gap-3">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div id="workshop-preview-panel" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-gray-200 bg-gray-50">
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Preview</p>
+                        <p id="workshop-preview-title" class="font-semibold text-gray-800 truncate">Select a worksheet
+                            to preview</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <a id="workshop-preview-download" href="#" download
+                            class="hidden text-sm font-medium text-black hover:underline px-3 py-2">
+                            <i class="fas fa-download mr-1"></i> Download PDF
+                        </a>
+                        <a id="workshop-preview-open" href="#" target="_blank" rel="noopener noreferrer"
+                            class="hidden text-sm font-medium text-black hover:underline px-3 py-2">
+                            <i class="fas fa-external-link-alt mr-1"></i> Open full screen
+                        </a>
+                        <button type="button" id="workshop-preview-close"
+                            class="hidden text-sm text-gray-500 hover:text-black px-3 py-2">
+                            Close
+                        </button>
+                    </div>
+                </div>
+                <div id="workshop-preview-empty"
+                    class="aspect-video bg-gray-100 flex items-center justify-center text-gray-500 text-sm p-6 text-center">
+                    Click <span class="font-semibold mx-1">Preview</span> on a week in the list above to view the
+                    worksheet here.
+                </div>
+                <iframe id="workshop-preview-frame" title="Worksheet preview"
+                    class="hidden w-full h-[80vh] bg-gray-100 border-0"></iframe>
+            </div>
+        </div>
+
+        <!-- TUTORIALS TAB -->
+        <div id="tutorials" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                    <div>
+                        <h2 id="tutorials-heading" class="text-2xl font-bold text-black mb-2">Online Tutorials</h2>
+                        <p id="tutorials-note" class="text-gray-600"></p>
+                    </div>
+                    <a id="tutorials-playlist-link" href="#" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 text-sm font-medium text-black hover:underline whitespace-nowrap px-1 py-2">
+                        <i class="fab fa-youtube text-red-600"></i> Open playlist on YouTube
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                    <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Now playing</p>
+                    <p id="tutorials-now-title" class="font-semibold text-gray-800 truncate">Loading playlist…</p>
+                </div>
+                <div id="tutorials-empty"
+                    class="hidden aspect-video bg-gray-100 flex items-center justify-center text-gray-500 text-sm p-6 text-center">
+                </div>
+                <div id="tutorials-player-wrap" class="aspect-video bg-black">
+                    <div id="tutorials-player" class="w-full h-full"></div>
+                </div>
+            </div>
+
+            <div id="tutorials-list" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <!-- Populated from the live YouTube playlist -->
+            </div>
+        </div>
+
+        <!-- RESOURCES TAB -->
+        <div id="resources" class="tab-content space-y-8">
+            <section id="resources-downloads"
+                class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-black">
+                <!-- Populated by JS -->
+            </section>
+
+            <div class="grid md:grid-cols-1 gap-6">
+                <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-laptop-code text-gray-600"></i> Software Requirements
+                    </h3>
+                    <ul id="software-list" class="space-y-3 text-sm text-gray-700">
+                        <!-- Populated by JS -->
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center text-sm mt-auto">
+        <p id="footer-copyright"></p>
+        <p id="footer-course" class="mt-1"></p>
+    </footer>
+
+    <script>
+        /* ============================================================
+           COURSE_CONFIG — edit this block for each new course website
+           ============================================================ */
+        const COURSE_CONFIG = {
+            // --- Identity ---
+            codes: "SSHD2382",
+            title: "Design Fundamentals",
+            institution: "PolyU CPCE / HKCC",
+            semester: "Semester One, 2026/2027 · Combined Group A01, A02",
+            tagline: "Combined Group A01, A02 — foundational visual communication through hands-on work with visual elements, design principles, semiotics, and prototyping.",
+
+            // --- Tabs ---
+            tabs: [
+                { id: "home", label: "Overview", icon: "fas fa-info-circle", enabled: true },
+                { id: "schedule", label: "Schedule", icon: "fas fa-calendar-alt", enabled: true },
+                { id: "assessments", label: "Assessments", icon: "fas fa-file-alt", enabled: true },
+                { id: "slides", label: "Slides", icon: "fas fa-images", enabled: true },
+                { id: "workshop", label: "Workshop", icon: "fas fa-users", enabled: true },
+                { id: "tutorials", label: "Online Tutorials", icon: "fab fa-youtube", enabled: true },
+                { id: "resources", label: "Resources", icon: "fas fa-folder-open", enabled: true }
+            ],
+
+            // --- Overview ---
+            overview: {
+                description: "This subject introduces foundational visual communication skills through hands-on exploration of basic visual elements (dot, line, shape, form, space, colour, and texture) and their meaningful applications. Students learn to apply design principles (movement, balance, emphasis, and unity) through workshop-based prototyping and develop a critical understanding of how these elements create visual meaning. The subject integrates basic semiotic concepts so students can communicate through visual language, and uses practical exercises — including generative AI — to explore, evaluate, and refine design solutions.",
+                outcomes: [
+                    "Identify various natures of visual elements and design principles.",
+                    "Apply visual elements and design principles in expressive compositions and narrations.",
+                    "Apply semiotic principles to communicate visual meaning effectively.",
+                    "Apply prototyping skills to explore potential design ideas."
+                ]
+            },
+
+            // --- Staff ---
+            staff: [
+                {
+                    role: "Subject Leader",
+                    name: "CHAN, Long-fung Lazarus",
+                    email: "lazarus.chan@cpce-polyu.edu.hk",
+                    icon: "fas fa-user-tie"
+                },
+                {
+                    role: "Subject Lecturer",
+                    name: "CHAN, Long-fung Lazarus",
+                    email: "lazarus.chan@cpce-polyu.edu.hk",
+                    icon: "fas fa-chalkboard-teacher"
+                }
+            ],
+
+            // --- Schedule ---
+            schedule: {
+                note: "1 hour of lecture and 2 hours of tutorial per week. Combined Group A01, A02.",
+                columns: [
+                    { key: "week", label: "Wk", className: "w-16 text-center" },
+                    { key: "lecture", label: "Lecture", className: "" },
+                    { key: "tutorial", label: "Tutorial", className: "" },
+                    { key: "remarks", label: "Remarks", className: "w-40", highlight: true }
+                ],
+                rows: [
+                    { week: 1, lecture: "Introduction to Design Fundamentals and GenAI in Design: visual communication vocabulary, overview, and AI ethics", tutorial: "Visual Journal and Design Observation Briefing: documentation, observation methods, and visual reference collection", remarks: "" },
+                    { week: 2, lecture: "Visual Elements: dot, line, shape, and space in two-dimensional composition", tutorial: "Paper-based Visual Elements Workshop: composition and hands-on exploration of dot, line, shape, and space", remarks: "" },
+                    { week: 3, lecture: "Graphic Design Grid Systems and Algorithmic Layouts: margins, columns, modules, gutters, and alignment", tutorial: "Basic Grid Construction: grid structures, organising text and image, and visual element placement", remarks: "Computer lab" },
+                    { week: 4, lecture: "Visual Hierarchy and Deconstructing Design Systems: focal point, contrast, scale, spacing, and reading order", tutorial: "Paper-based Layout Planning and Strategy Writing: thumbnails, hierarchy maps, and written strategies", remarks: "" },
+                    { week: 5, lecture: "Image, Text and Layout Composition: image-text relationships, layout flow, cropping, and visual grouping", tutorial: "Image, Text and Layout Composition: hierarchy, spacing, alignment, and grid-based layouts", remarks: "" },
+                    { week: 6, lecture: "Design Principles I — Movement and Balance: repetition, rhythm, direction, and visual weight", tutorial: "Movement and Balance Composition Workshop: repetition, rhythm, balance, and visual movement", remarks: "" },
+                    { week: 7, lecture: "Design Principles II — Emphasis and Unity: contrast, isolation, proximity, similarity, and alignment", tutorial: "Digital Composition and Typographic Layout: design principles, typography, and layout structure", remarks: "Computer lab" },
+                    { week: 8, lecture: "Colour, Texture and Visual Meaning: contrast, tone, harmony, mood, and emotional communication", tutorial: "Colour and Texture Composition Workshop: colour studies, texture studies, and expressive communication", remarks: "" },
+                    { week: 9, lecture: "Typography and Visual Refinement: letterform, hierarchy, spacing, alignment, and readability", tutorial: "Colour, Texture and Typographic Refinement: hierarchy and layout consistency", remarks: "Assignment 1 submission" },
+                    { week: 10, lecture: "Basic Semiotic Concepts: icon, index, symbol, denotation, connotation, signifier, and signified", tutorial: "Semiotic Research and Paper-based Visual Translation: signs, metaphors, and image-text prototyping", remarks: "" },
+                    { week: 11, lecture: "Strategic Design and Future Workflows: visual narration, framing, association, metaphor, and audience", tutorial: "Strategic and Workflow Design Workshop: semiotic studies, narrative layouts, signs, and text", remarks: "Computer lab" },
+                    { week: 12, lecture: "Final Presentation: project presentation, peer review, and submission preparation", tutorial: "Final Presentation: project presentation, peer review, and Individual Assignment 2 submission", remarks: "Presentations" },
+                    { week: 13, lecture: "Final Presentation: project presentation, peer review, and submission preparation", tutorial: "Final Presentation: project presentation, peer review, and Individual Assignment 2 submission", remarks: "Assignment 2 submission" }
+                ]
+            },
+
+            // --- Assessments ---
+            assessments: {
+                heading: "Continuous Assessment (100%)",
+                items: [
+                    {
+                        name: "In-class Exercises — Process Documentation (Visual Journal)",
+                        weight: "30%",
+                        desc: "Maintain a continuous visual journal over 13 weeks documenting design thinking, sketches, prompt iterations, conceptual development, and reflections on integrating traditional design with generative AI tools.",
+                        deadline: "Ongoing across Weeks 1–13 · PDF via Blackboard",
+                        requirements: [
+                            "Record observations, sketches, experiments, and reflections on a weekly basis.",
+                            "Use a range of media: hand-drawn sketches, digital drafts, photographs, and screenshots.",
+                            "Document generative AI experiments and how they relate to traditional design methods.",
+                            "Include written reflections that evaluate progress, decisions, and learning.",
+                            "Submit one PDF named [English full name]_[student number].pdf."
+                        ]
+                    },
+                    {
+                        name: "Individual Assignment 1 — Analyse an Existing Design System",
+                        weight: "30%",
+                        desc: "Select an existing brand or product design and deconstruct its visual and structural elements. Rewrite the analysis as a systematic plan that explains how the original design was constructed.",
+                        deadline: "Submission in Week 9 · PDF via Blackboard",
+                        requirements: [
+                            "Choose a clearly identifiable brand or product with enough visual material to analyse.",
+                            "Analyse visual elements (dot, line, shape, space, colour, texture) and design principles (movement, balance, emphasis, unity).",
+                            "Examine grid, hierarchy, alignment, and layout strategies.",
+                            "Submit an analytical PDF of about 6–10 pages with annotated images, diagrams, and written explanation."
+                        ]
+                    },
+                    {
+                        name: "Individual Assignment 2 — Strategic Enhancement and Workflow Presentation",
+                        weight: "40%",
+                        desc: "Building on Assignment 1, develop a strategic plan to enhance the selected design object. Rewrite the design workflow with generative AI and systems thinking, and present the enhanced system to the class.",
+                        deadline: "Due Week 13 · ZIP via Blackboard · presentations in Weeks 12–13",
+                        requirements: [
+                            "Propose meaningful improvements or extensions based on the Assignment 1 analysis.",
+                            "Identify where generative AI can support ideation, variation, refinement, or production.",
+                            "Present the workflow as a repeatable system with inputs, processes, outputs, and feedback.",
+                            "Submit a ZIP: 5–7 minute presentation slides, a PDF workflow document, and a 300–500 word summary."
+                        ]
+                    }
+                ],
+                plagiarism: "You are strongly advised to pay attention to the rules and guidance notes regarding plagiarism, how sources should be referred to, and bibliography referencing as stipulated in the Student Handbook. The College may take disciplinary actions against students when there is evidence of collusion. All included work of others must be attributed to its source. Extensive copy-pasting from AI-generated content without citation is considered plagiarism."
+            },
+
+            // --- Slides ---
+            slides: {
+                heading: "Lecture Slides",
+                note: "Use Preview to view a deck in the window below, or Open for a full-page view. Arrow keys navigate slides inside the preview. Weeks 6–7 and 8–9 share one deck each; Weeks 12–13 are presentation weeks.",
+                extras: [],
+                weeks: [
+                    { week: 1, title: "Introduction to Design Fundamentals and GenAI in Design", lectureUrl: "slides/week-01.html" },
+                    { week: 2, title: "Visual Elements", lectureUrl: "slides/week-02.html" },
+                    { week: 3, title: "Graphic Design Grid Systems and Algorithmic Layouts", lectureUrl: "slides/week-03.html" },
+                    { week: 4, title: "Visual Hierarchy and Deconstructing Design Systems", lectureUrl: "slides/week-04.html" },
+                    { week: 5, title: "Image, Text and Layout Composition", lectureUrl: "slides/week-05.html" },
+                    { week: "6–7", title: "Design Principles — Movement, Balance, Emphasis and Unity", lectureUrl: "slides/week-06-07.html" },
+                    { week: "8–9", title: "Colour, Texture, Typography and the Visual System", lectureUrl: "slides/week-08-09.html" },
+                    { week: 10, title: "Basic Semiotic Concepts", lectureUrl: "slides/week-10.html" },
+                    { week: 11, title: "Strategic Design and Future Workflows", lectureUrl: "slides/week-11.html" },
+                    { week: 12, title: "Final Presentation", note: "Presentation week — no lecture deck published" },
+                    { week: 13, title: "Final Presentation", note: "Presentation week — no lecture deck published" }
+                ]
+            },
+
+            // --- Workshop (Group Activity worksheets, PDFs built by export-worksheets.py) ---
+            workshop: {
+                heading: "Workshop — Group Activity Worksheets",
+                note: "Use Preview to read a worksheet below, or Download to save the PDF and fill it in. Upload your completed worksheet to Blackboard as instructed on its last page.",
+                weeks: [
+                    { week: 1, title: "Secret Needs — Observing, Guessing and Solving", pdfUrl: "assets/worksheets/week-01.pdf" },
+                    { week: 2, title: "Shape Stories — Triangle, Rectangle, Circle", pdfUrl: "assets/worksheets/week-02.pdf" },
+                    { week: "3–4", title: "Drawing the Hidden System — Lines, Grids and Hierarchy", pdfUrl: "assets/worksheets/week-03-04.pdf" },
+                    { week: 5, title: "Crop Comics — New Stories from Random Images", pdfUrl: "assets/worksheets/week-05.pdf" },
+                    { week: 6, title: "Stop Motion Workshop — Your Shape Story Comes Alive", pdfUrl: "assets/worksheets/week-06.pdf" },
+                    { week: "7–8", title: "Design Forensics — Technique, Software and the Assignment 1 Report", pdfUrl: "assets/worksheets/week-07-08.pdf" },
+                    { week: "9–10", title: "From Problems to AI Agent Workflows", pdfUrl: "assets/worksheets/week-09-10.pdf" },
+                    { week: "11–12", title: "Final Work Consultation", pdfUrl: "assets/worksheets/week-11-12.pdf" }
+                ]
+            },
+
+            // --- Online tutorials (live YouTube playlist; new uploads appear automatically) ---
+            tutorials: {
+                heading: "Online Tutorials",
+                note: "Tutorial videos from the course YouTube playlist. New videos appear here as soon as they are added to the playlist. Select a video below to play it.",
+                playlistId: "PLdmLs421QDxU",
+                emptyMessage: "No tutorial videos have been published yet. They will appear here as soon as they are added to the playlist."
+            },
+
+            // --- Resources ---
+            resources: {
+                badge: "Reading Guide",
+                title: "Design Fundamentals",
+                description: "Eighteen guides to the subjects of the course: what each covers, the main ideas, methods, figures, and the books behind them.",
+                downloads: [
+                    {
+                        label: "Design Fundamentals reading guide",
+                        url: "https://lazaruschan.github.io/Design-Fundamentals/index.html",
+                        icon: "fas fa-book-open",
+                        external: true
+                    }
+                ],
+                software: []
+            },
+
+            // --- Footer ---
+            footer: {
+                copyright: "© 2026/2027 PolyU CPCE."
+            }
+        };
+
+        /* ============================================================
+           Renderer — do not edit unless extending the template
+           ============================================================ */
+        (function renderCourseSite(config) {
+            const fullName = `${config.codes} ${config.title}`;
+
+            document.title = fullName;
+            document.getElementById("header-eyebrow").textContent =
+                `${config.institution} (${config.semester})`;
+            document.getElementById("header-title").innerHTML =
+                `${escapeHtml(config.codes)}<br><span class="text-gray-300">${escapeHtml(config.title)}</span>`;
+            document.getElementById("header-tagline").textContent = config.tagline;
+
+            // Tabs
+            const enabledTabs = config.tabs.filter(t => t.enabled !== false);
+            const nav = document.getElementById("nav-tabs");
+            nav.innerHTML = "";
+            enabledTabs.forEach((tab, index) => {
+                const btn = document.createElement("button");
+                btn.id = `btn-${tab.id}`;
+                btn.className = [
+                    "tab-btn flex items-center gap-2 px-6 py-4 font-medium text-sm transition-colors whitespace-nowrap border-b-2",
+                    index === 0
+                        ? "border-black text-black"
+                        : "text-gray-500 hover:text-black hover:bg-gray-50 border-transparent"
+                ].join(" ");
+                btn.innerHTML = `<i class="${tab.icon}"></i> ${escapeHtml(tab.label)}`;
+                btn.addEventListener("click", () => switchTab(tab.id));
+                nav.appendChild(btn);
+
+                const panel = document.getElementById(tab.id);
+                if (panel) {
+                    panel.classList.toggle("active", index === 0);
+                    panel.style.display = ""; // rely on CSS .active
+                }
+            });
+
+            // Hide disabled tab panels
+            config.tabs.forEach(tab => {
+                const panel = document.getElementById(tab.id);
+                if (panel && tab.enabled === false) {
+                    panel.remove();
+                }
+            });
+
+            // Overview
+            document.getElementById("overview-description").textContent = config.overview.description;
+            const outcomes = document.getElementById("overview-outcomes");
+            outcomes.innerHTML = "";
+            config.overview.outcomes.forEach(text => {
+                const li = document.createElement("li");
+                li.textContent = text;
+                outcomes.appendChild(li);
+            });
+
+            // Staff
+            const staffContainer = document.getElementById("staff-container");
+            staffContainer.innerHTML = "";
+            config.staff.forEach(person => {
+                const card = document.createElement("div");
+                card.className = "bg-white p-6 rounded-lg shadow-sm border border-gray-200 flex items-start gap-4";
+                const officeHtml = person.office
+                    ? `<p class="text-sm text-gray-500 mt-1"><i class="fas fa-map-marker-alt w-4"></i> Office: ${escapeHtml(person.office)}</p>`
+                    : "";
+                const emailHtml = person.email
+                    ? `<p class="text-sm text-black mt-1"><i class="fas fa-envelope w-4"></i> ${escapeHtml(person.email)}</p>`
+                    : "";
+                card.innerHTML = `
+                    <div class="bg-gray-100 p-3 rounded-full text-black"><i class="${person.icon || "fas fa-user"} fa-lg"></i></div>
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-800">${escapeHtml(person.role)}</h3>
+                        <p class="text-gray-700 font-medium">${escapeHtml(person.name)}</p>
+                        ${officeHtml}
+                        ${emailHtml}
+                    </div>
+                `;
+                staffContainer.appendChild(card);
+            });
+
+            // Schedule
+            document.getElementById("schedule-note").textContent = config.schedule.note;
+            const scheduleHead = document.getElementById("schedule-head");
+            scheduleHead.innerHTML = "";
+            config.schedule.columns.forEach(col => {
+                const th = document.createElement("th");
+                th.className = `p-4 border-b font-semibold ${col.className || ""}`;
+                th.textContent = col.label;
+                scheduleHead.appendChild(th);
+            });
+
+            const scheduleBody = document.getElementById("schedule-body");
+            scheduleBody.innerHTML = "";
+            config.schedule.rows.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-gray-50 transition-colors";
+                tr.innerHTML = config.schedule.columns.map(col => {
+                    const value = row[col.key] ?? "";
+                    const extra = col.highlight
+                        ? "font-bold text-yellow-600 text-sm"
+                        : (col.key === "week" ? "text-center font-medium" : "");
+                    return `<td class="p-4 border-b ${extra}">${escapeHtml(String(value))}</td>`;
+                }).join("");
+                scheduleBody.appendChild(tr);
+            });
+
+            // Assessments
+            document.getElementById("assessments-heading").textContent = config.assessments.heading;
+            const assessmentsContainer = document.getElementById("assessments-container");
+            assessmentsContainer.innerHTML = "";
+            config.assessments.items.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "bg-white p-6 rounded-lg shadow-sm border border-gray-200";
+                const requirements = (item.requirements || []).map(r =>
+                    `<li class="text-sm text-gray-700">${escapeHtml(r)}</li>`
+                ).join("");
+                const requirementsHtml = requirements
+                    ? `<ul class="list-disc pl-5 mt-3 space-y-1">${requirements}</ul>`
+                    : "";
+                const deadlineHtml = item.deadline
+                    ? `<p class="text-sm font-semibold text-yellow-700 mt-2"><i class="fas fa-clock mr-1"></i>${escapeHtml(item.deadline)}</p>`
+                    : "";
+                const downloadHtml = item.downloadUrl
+                    ? `<a href="${escapeAttr(item.downloadUrl)}" class="inline-flex items-center gap-2 mt-4 text-sm font-medium text-black hover:underline">
+                            <i class="fas fa-file-word"></i> ${escapeHtml(item.downloadLabel || "Download brief")}
+                       </a>`
+                    : "";
+                div.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-start gap-4">
+                        <div class="bg-gray-100 text-black font-bold text-2xl p-4 rounded-lg text-center min-w-[100px]">
+                            ${escapeHtml(item.weight)}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-gray-800 mb-1">${escapeHtml(item.name)}</h3>
+                            <p class="text-gray-600">${escapeHtml(item.desc)}</p>
+                            ${deadlineHtml}
+                            ${requirementsHtml}
+                            ${downloadHtml}
+                        </div>
+                    </div>
+                `;
+                assessmentsContainer.appendChild(div);
+            });
+
+            if (config.assessments.plagiarism) {
+                document.getElementById("plagiarism-text").textContent = config.assessments.plagiarism;
+            } else {
+                document.getElementById("plagiarism-notice").remove();
+            }
+
+            // Slides
+            if (config.slides) {
+                const slidesHeading = document.getElementById("slides-heading");
+                const slidesNote = document.getElementById("slides-note");
+                const slidesExtra = document.getElementById("slides-extra");
+                const slidesContainer = document.getElementById("slides-container");
+                const previewTitle = document.getElementById("slides-preview-title");
+                const previewFrame = document.getElementById("slides-preview-frame");
+                const previewEmpty = document.getElementById("slides-preview-empty");
+                const previewOpen = document.getElementById("slides-preview-open");
+                const previewClose = document.getElementById("slides-preview-close");
+
+                function loadSlidePreview(url, label) {
+                    if (!previewFrame || !url) return;
+                    if (previewTitle) previewTitle.textContent = label || "Slide preview";
+                    if (previewEmpty) previewEmpty.classList.add("hidden");
+                    previewFrame.classList.remove("hidden");
+                    previewFrame.src = url;
+                    if (previewOpen) {
+                        previewOpen.href = url;
+                        previewOpen.classList.remove("hidden");
+                    }
+                    if (previewClose) previewClose.classList.remove("hidden");
+                    const panel = document.getElementById("slides-preview-panel");
+                    if (panel) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }
+
+                function clearSlidePreview() {
+                    if (previewFrame) {
+                        previewFrame.src = "about:blank";
+                        previewFrame.classList.add("hidden");
+                    }
+                    if (previewEmpty) previewEmpty.classList.remove("hidden");
+                    if (previewTitle) previewTitle.textContent = "Select a lecture to preview";
+                    if (previewOpen) {
+                        previewOpen.href = "#";
+                        previewOpen.classList.add("hidden");
+                    }
+                    if (previewClose) previewClose.classList.add("hidden");
+                }
+
+                if (previewClose) {
+                    previewClose.addEventListener("click", clearSlidePreview);
+                }
+
+                if (slidesHeading && config.slides.heading) slidesHeading.textContent = config.slides.heading;
+                if (slidesNote) slidesNote.textContent = config.slides.note || "";
+                if (slidesExtra) {
+                    slidesExtra.innerHTML = "";
+                    (config.slides.extras || []).forEach(extra => {
+                        const wrap = document.createElement("div");
+                        wrap.className = "inline-flex flex-wrap gap-2 mr-2 mb-2";
+                        const previewBtn = document.createElement("button");
+                        previewBtn.type = "button";
+                        previewBtn.className = "inline-flex items-center gap-2 bg-black hover:bg-gray-800 text-white px-4 py-3 rounded font-medium text-sm transition-colors";
+                        previewBtn.innerHTML = `<i class="${extra.icon || "fas fa-book"}"></i> ${escapeHtml(extra.label)}`;
+                        previewBtn.addEventListener("click", () => loadSlidePreview(extra.url, extra.label));
+                        const openLink = document.createElement("a");
+                        openLink.href = extra.url;
+                        openLink.target = "_blank";
+                        openLink.rel = "noopener noreferrer";
+                        openLink.className = "inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 px-4 py-3 rounded font-medium text-sm transition-colors";
+                        openLink.innerHTML = `<i class="fas fa-external-link-alt"></i> Open`;
+                        wrap.appendChild(previewBtn);
+                        wrap.appendChild(openLink);
+                        slidesExtra.appendChild(wrap);
+                    });
+                }
+                if (slidesContainer) {
+                    slidesContainer.innerHTML = "";
+                    (config.slides.weeks || []).forEach(week => {
+                        const row = document.createElement("div");
+                        row.className = "flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg bg-gray-50";
+                        const label = `Week ${week.week} — ${week.title}`;
+                        const actions = document.createElement("div");
+                        actions.className = "flex items-center flex-wrap gap-2";
+
+                        if (week.lectureUrl) {
+                            const previewBtn = document.createElement("button");
+                            previewBtn.type = "button";
+                            previewBtn.className = "text-sm font-medium bg-black text-white hover:bg-gray-800 px-3 py-1.5 rounded whitespace-nowrap";
+                            previewBtn.innerHTML = `<i class="fas fa-eye mr-1"></i>Preview`;
+                            previewBtn.addEventListener("click", () => loadSlidePreview(week.lectureUrl, label));
+                            actions.appendChild(previewBtn);
+
+                            const openLink = document.createElement("a");
+                            openLink.href = week.lectureUrl;
+                            openLink.target = "_blank";
+                            openLink.rel = "noopener noreferrer";
+                            openLink.className = "text-sm font-medium text-black hover:underline whitespace-nowrap px-1";
+                            openLink.innerHTML = `<i class="fas fa-chalkboard mr-1"></i>Open`;
+                            actions.appendChild(openLink);
+                        }
+                        if (week.tutorialUrl) {
+                            const tutBtn = document.createElement("button");
+                            tutBtn.type = "button";
+                            tutBtn.className = "text-sm font-medium text-black hover:underline whitespace-nowrap";
+                            tutBtn.innerHTML = `<i class="fas fa-laptop-code mr-1"></i>Tutorial`;
+                            tutBtn.addEventListener("click", () => loadSlidePreview(week.tutorialUrl, `${label} (Tutorial)`));
+                            actions.appendChild(tutBtn);
+                        }
+                        if (week.note && !week.lectureUrl && !week.tutorialUrl) {
+                            const note = document.createElement("span");
+                            note.className = "text-sm text-gray-500 italic";
+                            note.textContent = week.note;
+                            actions.appendChild(note);
+                        } else if (!week.lectureUrl && !week.tutorialUrl && !week.note) {
+                            const soon = document.createElement("span");
+                            soon.className = "text-sm text-gray-400";
+                            soon.textContent = "Coming soon";
+                            actions.appendChild(soon);
+                        } else if (week.note && (week.lectureUrl || week.tutorialUrl)) {
+                            const note = document.createElement("span");
+                            note.className = "text-sm text-gray-500 italic";
+                            note.textContent = week.note;
+                            actions.appendChild(note);
+                        }
+
+                        row.innerHTML = `
+                            <div>
+                                <span class="inline-block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Week ${escapeHtml(String(week.week))}</span>
+                                <h3 class="font-semibold text-gray-800">${escapeHtml(week.title)}</h3>
+                            </div>
+                        `;
+                        row.appendChild(actions);
+                        slidesContainer.appendChild(row);
+                    });
+                }
+            }
+
+            // Workshop
+            if (config.workshop) {
+                const workshopContainer = document.getElementById("workshop-container");
+                const wsTitle = document.getElementById("workshop-preview-title");
+                const wsFrame = document.getElementById("workshop-preview-frame");
+                const wsEmpty = document.getElementById("workshop-preview-empty");
+                const wsOpen = document.getElementById("workshop-preview-open");
+                const wsDownload = document.getElementById("workshop-preview-download");
+                const wsClose = document.getElementById("workshop-preview-close");
+                const downloadName = url => `${config.codes}_${url.split("/").pop().replace(/\.pdf$/i, "")}_Worksheet.pdf`;
+
+                function loadWorksheetPreview(url, label) {
+                    wsTitle.textContent = label;
+                    wsEmpty.classList.add("hidden");
+                    wsFrame.classList.remove("hidden");
+                    wsFrame.src = `${url}#view=FitH`;
+                    wsOpen.href = url;
+                    wsDownload.href = url;
+                    wsDownload.setAttribute("download", downloadName(url));
+                    [wsOpen, wsDownload, wsClose].forEach(el => el.classList.remove("hidden"));
+                    document.getElementById("workshop-preview-panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+                }
+
+                wsClose.addEventListener("click", () => {
+                    wsFrame.src = "about:blank";
+                    wsFrame.classList.add("hidden");
+                    wsEmpty.classList.remove("hidden");
+                    wsTitle.textContent = "Select a worksheet to preview";
+                    [wsOpen, wsDownload, wsClose].forEach(el => el.classList.add("hidden"));
+                });
+
+                document.getElementById("workshop-heading").textContent = config.workshop.heading || "Workshop";
+                document.getElementById("workshop-note").textContent = config.workshop.note || "";
+                workshopContainer.innerHTML = "";
+                (config.workshop.weeks || []).forEach(week => {
+                    const label = `Week ${week.week} — ${week.title}`;
+                    const row = document.createElement("div");
+                    row.className = "flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg bg-gray-50";
+                    row.innerHTML = `
+                        <div>
+                            <span class="inline-block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Week ${escapeHtml(String(week.week))}</span>
+                            <h3 class="font-semibold text-gray-800">${escapeHtml(week.title)}</h3>
+                        </div>
+                    `;
+                    const actions = document.createElement("div");
+                    actions.className = "flex items-center flex-wrap gap-2";
+                    if (week.pdfUrl) {
+                        const previewBtn = document.createElement("button");
+                        previewBtn.type = "button";
+                        previewBtn.className = "text-sm font-medium bg-black text-white hover:bg-gray-800 px-3 py-1.5 rounded whitespace-nowrap";
+                        previewBtn.innerHTML = `<i class="fas fa-eye mr-1"></i>Preview`;
+                        previewBtn.addEventListener("click", () => loadWorksheetPreview(week.pdfUrl, label));
+
+                        const downloadLink = document.createElement("a");
+                        downloadLink.href = week.pdfUrl;
+                        downloadLink.setAttribute("download", downloadName(week.pdfUrl));
+                        downloadLink.className = "text-sm font-medium bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 px-3 py-1.5 rounded whitespace-nowrap";
+                        downloadLink.innerHTML = `<i class="fas fa-file-pdf mr-1"></i>Download PDF`;
+
+                        actions.append(previewBtn, downloadLink);
+                    } else {
+                        const soon = document.createElement("span");
+                        soon.className = "text-sm text-gray-400";
+                        soon.textContent = week.note || "Coming soon";
+                        actions.appendChild(soon);
+                    }
+                    row.appendChild(actions);
+                    workshopContainer.appendChild(row);
+                });
+            }
+
+            // Tutorials (player loads the first time the tab is opened)
+            if (config.tutorials) {
+                document.getElementById("tutorials-heading").textContent = config.tutorials.heading || "Online Tutorials";
+                document.getElementById("tutorials-note").textContent = config.tutorials.note || "";
+                document.getElementById("tutorials-playlist-link").href =
+                    `https://www.youtube.com/playlist?list=${encodeURIComponent(config.tutorials.playlistId)}`;
+            }
+
+            // Resources
+            const downloadsSection = document.getElementById("resources-downloads");
+            const downloadsHtml = (config.resources.downloads || []).map(file => `
+                <a href="${file.tab ? `#${escapeAttr(file.tab)}` : escapeAttr(file.url)}" ${file.tab ? `data-tab="${escapeAttr(file.tab)}"` : ""} ${file.external ? `target="_blank" rel="noopener noreferrer"` : ""} class="bg-black hover:bg-gray-800 text-white px-4 py-3 rounded font-medium text-sm transition-colors flex items-center justify-between shadow-sm">
+                    <span class="flex items-center gap-2"><i class="${file.icon || "fas fa-download"}"></i> ${escapeHtml(file.label)}</span>
+                    <i class="fas ${file.tab ? "fa-arrow-right" : (file.external ? "fa-external-link-alt" : "fa-download")}"></i>
+                </a>
+            `).join("");
+
+            const repoHtml = config.resources.repoUrl
+                ? `<a href="${escapeAttr(config.resources.repoUrl)}" target="_blank" rel="noopener noreferrer" class="mt-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 px-4 py-2 rounded font-medium text-sm transition-colors flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fas fa-book-open"></i> ${escapeHtml(config.resources.repoLabel || "View Full Repository on GitHub")}
+                   </a>`
+                : "";
+
+            downloadsSection.innerHTML = `
+                <div class="flex items-start gap-4">
+                    <div class="bg-gray-100 p-4 rounded-lg text-black hidden sm:block">
+                        <i class="fas fa-folder-open fa-2x"></i>
+                    </div>
+                    <div class="w-full">
+                        <span class="inline-block px-2 py-1 bg-gray-200 text-gray-800 text-xs font-bold rounded mb-2">${escapeHtml(config.resources.badge || "Resources")}</span>
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">${escapeHtml(config.resources.title)}</h2>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">${escapeHtml(config.resources.description)}</p>
+                        <div class="flex flex-col gap-3 w-full max-w-md">
+                            ${downloadsHtml}
+                            ${repoHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            downloadsSection.querySelectorAll("[data-tab]").forEach(link => {
+                link.addEventListener("click", event => {
+                    event.preventDefault();
+                    switchTab(link.dataset.tab);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                });
+            });
+
+            const softwareList = document.getElementById("software-list");
+            const softwareItems = config.resources.software || [];
+            const softwareWrap = softwareList.closest(".grid");
+            softwareList.innerHTML = "";
+            if (!softwareItems.length && softwareWrap) {
+                softwareWrap.style.display = "none";
+            }
+            softwareItems.forEach(item => {
+                const li = document.createElement("li");
+                li.className = "flex items-center gap-2";
+                li.innerHTML = `<i class="fas fa-check text-black"></i> ${escapeHtml(item)}`;
+                softwareList.appendChild(li);
+            });
+
+            // Footer
+            document.getElementById("footer-copyright").textContent =
+                config.footer.copyright || `© ${config.semester} ${config.institution}.`;
+            document.getElementById("footer-course").textContent =
+                config.footer.course || fullName;
+        })(COURSE_CONFIG);
+
+        function switchTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => {
+                el.classList.remove("active");
+            });
+            const panel = document.getElementById(tabId);
+            if (panel) panel.classList.add("active");
+
+            document.querySelectorAll(".tab-btn").forEach(btn => {
+                btn.classList.remove("border-black", "text-black");
+                btn.classList.add("text-gray-500", "border-transparent");
+            });
+
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove("text-gray-500", "border-transparent");
+                activeBtn.classList.add("border-black", "text-black");
+            }
+
+            if (tabId === "tutorials") loadTutorials();
+        }
+
+        let tutorialsStarted = false;
+
+        function loadTutorials() {
+            const cfg = COURSE_CONFIG.tutorials;
+            if (tutorialsStarted || !cfg || !cfg.playlistId) return;
+            tutorialsStarted = true;
+
+            const nowTitle = document.getElementById("tutorials-now-title");
+            const list = document.getElementById("tutorials-list");
+            const playerWrap = document.getElementById("tutorials-player-wrap");
+            const empty = document.getElementById("tutorials-empty");
+            const titles = {};
+            let player;
+
+            function playlistIds() {
+                return (player && typeof player.getPlaylist === "function" && player.getPlaylist()) || [];
+            }
+
+            function showEmpty() {
+                playerWrap.classList.add("hidden");
+                empty.textContent = cfg.emptyMessage || "No videos have been published yet.";
+                empty.classList.remove("hidden");
+                nowTitle.textContent = "No videos yet";
+                list.innerHTML = "";
+            }
+
+            function highlight(index) {
+                list.querySelectorAll("button").forEach((btn, i) => {
+                    btn.classList.toggle("ring-2", i === index);
+                    btn.classList.toggle("ring-black", i === index);
+                });
+                const id = playlistIds()[index];
+                if (id) nowTitle.textContent = titles[id] || `Video ${index + 1}`;
+            }
+
+            function renderList(ids) {
+                list.innerHTML = "";
+                ids.forEach((id, index) => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "text-left bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:border-black transition-colors";
+                    btn.innerHTML = `
+                        <img src="https://i.ytimg.com/vi/${encodeURIComponent(id)}/mqdefault.jpg" alt="" loading="lazy"
+                            class="w-full aspect-video object-cover bg-gray-100">
+                        <div class="p-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Video ${index + 1}</span>
+                            <p class="font-semibold text-gray-800 text-sm mt-1" data-title>Loading title…</p>
+                        </div>
+                    `;
+                    btn.addEventListener("click", () => {
+                        player.playVideoAt(index);
+                        playerWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                    });
+                    list.appendChild(btn);
+
+                    const watchUrl = `https://www.youtube.com/watch?v=${id}`;
+                    fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(watchUrl)}`)
+                        .then(res => (res.ok ? res.json() : null))
+                        .then(data => {
+                            titles[id] = (data && data.title) || `Video ${index + 1}`;
+                            btn.querySelector("[data-title]").textContent = titles[id];
+                            if (player.getPlaylistIndex() === index) nowTitle.textContent = titles[id];
+                        })
+                        .catch(() => {
+                            btn.querySelector("[data-title]").textContent = `Video ${index + 1}`;
+                        });
+                });
+                highlight(Math.max(0, player.getPlaylistIndex()));
+            }
+
+            // getPlaylist() can be empty for a moment after onReady, so poll briefly before giving up.
+            function readPlaylist(attempt) {
+                const ids = playlistIds();
+                if (ids.length) return renderList(ids);
+                if (attempt < 5) return setTimeout(() => readPlaylist(attempt + 1), 600);
+                showEmpty();
+            }
+
+            window.onYouTubeIframeAPIReady = () => {
+                player = new YT.Player("tutorials-player", {
+                    width: "100%",
+                    height: "100%",
+                    playerVars: { listType: "playlist", list: cfg.playlistId, rel: 0, playsinline: 1 },
+                    events: {
+                        onReady: () => readPlaylist(0),
+                        onStateChange: () => {
+                            const index = player.getPlaylistIndex();
+                            if (index >= 0) highlight(index);
+                        },
+                        onError: () => {
+                            if (!playlistIds().length) showEmpty();
+                        }
+                    }
+                });
+            };
+
+            const api = document.createElement("script");
+            api.src = "https://www.youtube.com/iframe_api";
+            document.head.appendChild(api);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function escapeAttr(str) {
+            return escapeHtml(str).replace(/'/g, "&#39;");
+        }
+    </script>
+</body>
+
+</html>

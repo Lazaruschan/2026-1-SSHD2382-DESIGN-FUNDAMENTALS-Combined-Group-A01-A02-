@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+*.log
+*.rtf
+start.rtf
+.env
+.env.*
+*token*
+*secret*
+github-token.txt
+.slide-stage/
+.worksheet-stage/
